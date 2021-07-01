@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "957950141669",
+    "project_id": "icarcheckingkotlin",
+    "storage_bucket": "icarcheckingkotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957950141669:android:80a948b78b0cfce781a00c",
+        "android_client_info": {
+          "package_name": "com.pnhung.icarchecking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "957950141669-bmdblok6rj32rbkgeg42d8qjdrifne4a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC09GjvYW7JTSoijvJRWsR-1frYbfJXXNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "957950141669-bmdblok6rj32rbkgeg42d8qjdrifne4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
