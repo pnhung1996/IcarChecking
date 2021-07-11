@@ -47,6 +47,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
     compileOnly 'org.projectlombok:lombok:1.18.20'
 
+    //Web socket
+    implementation 'org.java-websocket:Java-WebSocket:1.5.1'
+
     //MVVM
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")

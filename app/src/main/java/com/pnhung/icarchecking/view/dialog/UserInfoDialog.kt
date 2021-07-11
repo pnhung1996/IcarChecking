@@ -6,11 +6,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.pnhung.icarchecking.CommonUtils
 import com.pnhung.icarchecking.R
+import com.pnhung.icarchecking.databinding.ViewM003UserInfoDialogBinding
 import com.pnhung.icarchecking.view.callback.OnActionCallBack
 import com.pnhung.icarchecking.view.viewmodel.BaseViewModel
 
-class UserInfoDialog(context: Context, callBack: OnActionCallBack) : BaseDialog<BaseViewModel, Any?>(context, R.style.dialog_style_anim){
+class UserInfoDialog(context: Context, callBack: OnActionCallBack) : BaseDialog<ViewM003UserInfoDialogBinding,BaseViewModel, Any?>(context, R.style.dialog_style_anim){
     init {
+        setCancelable(false)
+        setCanceledOnTouchOutside(false)
         mCallBack = callBack
     }
     override fun initViews() {
@@ -31,7 +34,8 @@ class UserInfoDialog(context: Context, callBack: OnActionCallBack) : BaseDialog<
     override fun onClick(view: View) {
         when(view.id){
             R.id.tv_change_password -> {
-
+                goToChangePasswordDialog()
+                dismiss()
             }
 
             R.id.tv_update -> {
@@ -45,6 +49,11 @@ class UserInfoDialog(context: Context, callBack: OnActionCallBack) : BaseDialog<
         }
     }
 
+    private fun goToChangePasswordDialog() {
+        val changePasswordDialog = ChangePasswordDialog(mContext!!)
+        changePasswordDialog.show()
+    }
+
     private fun goToUpdateUserNameDialog() {
         val updateUserNameDialog = UpdateUserNameDialog(mContext!!, mCallBack!!)
         updateUserNameDialog.show()
@@ -52,5 +61,9 @@ class UserInfoDialog(context: Context, callBack: OnActionCallBack) : BaseDialog<
 
     override fun getLayoutId(): Int {
         return R.layout.view_m003_user_info_dialog
+    }
+
+    override fun initViewBinding(view: View): ViewM003UserInfoDialogBinding {
+        return ViewM003UserInfoDialogBinding.bind(view)
     }
 }

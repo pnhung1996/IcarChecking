@@ -12,4 +12,7 @@ open class BaseModel<T> : Serializable {
 
     @SerializedName("data")
     var data: T? = null
+
+    @SerializedName("error")
+    var error: T? = null
 }

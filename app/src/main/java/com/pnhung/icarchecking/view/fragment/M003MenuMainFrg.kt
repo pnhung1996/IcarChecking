@@ -19,6 +19,8 @@ import com.pnhung.icarchecking.view.MapManager
 import com.pnhung.icarchecking.view.ProgressLoading
 import com.pnhung.icarchecking.view.api.model.CarInforModelRes
 import com.pnhung.icarchecking.view.api.model.UserInfoModelRes
+import com.pnhung.icarchecking.view.callback.OnActionCallBack
+import com.pnhung.icarchecking.view.dialog.CarInfoDialog
 import com.pnhung.icarchecking.view.dialog.UpdateUserNameDialog
 import com.pnhung.icarchecking.view.dialog.UserInfoDialog
 import com.pnhung.icarchecking.view.viewmodel.BaseViewModel
@@ -51,11 +53,12 @@ class M003MenuMainFrg : BaseFragment<FrgM003MenuMainBinding, M003MenuMainViewMod
         binding?.includeMenu?.tvLogOut?.setOnClickListener(this)
         binding?.includeMenu?.tbrMyLocation?.setOnClickListener(this)
         binding?.includeMenu?.tbrUserInfo?.setOnClickListener(this)
+
+        MapManager.getInstance().callBack = this
         val mapFragment = childFragmentManager.findFragmentById(R.id.frg_map) as SupportMapFragment
         mapFragment.getMapAsync {
             ProgressLoading.show(mContext, false)
-            MapManager.getInstance().mMap = it
-            MapManager.getInstance().initMap()
+            MapManager.getInstance().initMap(it)
         }
     }
 
@@ -113,6 +116,12 @@ class M003MenuMainFrg : BaseFragment<FrgM003MenuMainBinding, M003MenuMainViewMod
             UpdateUserNameViewModel.API_KEY_UPDATE_USERNAME -> {
                 updateUserName(data)
             }
+            CarInfoDialog.KEY_SHOW_TRACKING -> {
+                callBack?.showFrg(TAG, data, M007TrackingFrg.TAG, true)
+            }
+            CarInfoDialog.KEY_SHOW_TIME_LINE -> {
+                callBack?.showFrg(TAG, data, M004TimeLineFrg.TAG, true)
+            }
         }
     }
 
@@ -121,7 +130,8 @@ class M003MenuMainFrg : BaseFragment<FrgM003MenuMainBinding, M003MenuMainViewMod
             binding?.drawer?.closeDrawers()
             val updateUserModelRes = data as UserInfoModelRes
             Toast.makeText(mContext, "Cập nhật tên thành công!", Toast.LENGTH_SHORT).show()
-            CommonUtils.getInstance().savePref(BaseViewModel.USER_NAME, updateUserModelRes.data?.username)
+            CommonUtils.getInstance()
+                .savePref(BaseViewModel.USER_NAME, updateUserModelRes.data?.username)
             binding?.includeMenu?.tvUserName?.text = updateUserModelRes.data?.username
         }
     }

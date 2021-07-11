@@ -12,4 +12,7 @@ class UserInfoEntity : Serializable {
 
     @SerializedName("token")
     val token: String? = null
+
+    @SerializedName("message")
+    val message: String? = null
 }

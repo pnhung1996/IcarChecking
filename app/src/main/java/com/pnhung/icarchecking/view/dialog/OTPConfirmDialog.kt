@@ -11,12 +11,13 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.gson.internal.LinkedTreeMap
 import com.pnhung.icarchecking.R
+import com.pnhung.icarchecking.databinding.ViewM001OtpDialogBinding
 import com.pnhung.icarchecking.view.callback.OnActionCallBack
 import com.pnhung.icarchecking.view.viewmodel.BaseViewModel
 import org.json.JSONObject
 
 class OTPConfirmDialog(context: Context, data: String?, callBack: OnActionCallBack) :
-    BaseDialog<BaseViewModel, String?>(context, data, R.style.dialog_style_anim) {
+    BaseDialog<ViewM001OtpDialogBinding,BaseViewModel, String?>(context, data, R.style.dialog_style_anim) {
     private lateinit var edtOTP : EditText
     companion object {
         const val KEY_CONFIRM_OTP = "KEY_CONFIRM_OTP"
@@ -58,5 +59,9 @@ class OTPConfirmDialog(context: Context, data: String?, callBack: OnActionCallBa
             }
             R.id.btn_back -> dismiss()
         }
+    }
+
+    override fun initViewBinding(view: View): ViewM001OtpDialogBinding {
+        return ViewM001OtpDialogBinding.bind(view)
     }
 }

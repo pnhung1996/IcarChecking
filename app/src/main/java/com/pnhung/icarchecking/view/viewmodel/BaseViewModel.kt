@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import com.pnhung.icarchecking.App
 import com.pnhung.icarchecking.CommonUtils
 import com.pnhung.icarchecking.Storage
 import com.pnhung.icarchecking.view.ProgressLoading
 import com.pnhung.icarchecking.view.api.model.BaseModel
+import com.pnhung.icarchecking.view.api.model.entities.UserInfoEntity
 import com.pnhung.icarchecking.view.callback.OnActionCallBack
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -59,7 +61,7 @@ abstract class BaseViewModel : ViewModel() {
                 e.printStackTrace()
             }
             when (code){
-                CODE_400 -> if (errorBody != null) {
+                CODE_400, CODE_422 -> if (errorBody != null) {
                     notifyToView(if (err != null) err.message else errorBody.string())
                 }
                 CODE_401 -> {
@@ -117,6 +119,7 @@ abstract class BaseViewModel : ViewModel() {
         const val TOKEN = "TOKEN"
         const val PHONE: String = "PHONE"
         protected const val CODE_400 = 400
+        protected const val CODE_422 = 422
         protected const val CODE_401 = 401
         protected const val CODE_403 = 403
         protected const val CODE_404 = 404

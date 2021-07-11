@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/d_30"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_50"
+            android:background="@color/colorOrange"
+            android:padding="@dimen/d_10">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="@dimen/d_30"
+                android:layout_height="@dimen/d_30"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/d_5"
+                android:contentDescription="@string/txt_car_info"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/d_20"
+                android:gravity="center_vertical"
+                android:text="@string/txt_car_info"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_20"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/d_10">
+
+                <TextView
+                    android:id="@+id/tv_car_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_car_info"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/s_15"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="@dimen/d_44"
+                    android:layout_height="@dimen/d_44"
+                    android:contentDescription="@string/txt_car_info"
+                    android:src="@drawable/ic_car_avt" />
+
+                <TextView
+                    android:id="@+id/tv_car_brand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_car_brand"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/s_15"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_car_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/d_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/s_15"
+                        android:text="@string/txt_car_status"/>
+
+                    <TextView
+                        android:id="@+id/tv_car_speed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/d_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/s_15"
+                        android:text="@string/txt_car_speed"/>
+
+                    <TextView
+                        android:id="@+id/tv_car_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/d_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/s_15"
+                        android:text="@string/txt_location"/>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_56"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_observe"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/d_10"
+                android:layout_weight="1"
+                android:background="@drawable/bg_login_edt"
+                android:gravity="center"
+                android:text="@string/txt_monitor"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_12"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_history"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/d_10"
+                android:layout_weight="1"
+                android:background="@drawable/bg_login_edt"
+                android:gravity="center"
+                android:text="@string/txt_time_line"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_12"
+                android:textStyle="bold" />
+        </TableRow>
+    </LinearLayout>
+</FrameLayout>

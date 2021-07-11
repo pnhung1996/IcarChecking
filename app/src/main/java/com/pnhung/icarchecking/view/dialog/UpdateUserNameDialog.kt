@@ -9,12 +9,13 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.pnhung.icarchecking.CommonUtils
 import com.pnhung.icarchecking.R
+import com.pnhung.icarchecking.databinding.ViewM003UpdateUserNameDialogBinding
 import com.pnhung.icarchecking.view.callback.OnActionCallBack
 import com.pnhung.icarchecking.view.viewmodel.BaseViewModel
 import com.pnhung.icarchecking.view.viewmodel.UpdateUserNameViewModel
 
 class UpdateUserNameDialog(context: Context, callBack: OnActionCallBack) :
-    BaseDialog<UpdateUserNameViewModel, Any?>(
+    BaseDialog<ViewM003UpdateUserNameDialogBinding,UpdateUserNameViewModel, Any?>(
         context,
         null,
         R.style.dialog_style_anim,
@@ -22,6 +23,8 @@ class UpdateUserNameDialog(context: Context, callBack: OnActionCallBack) :
         UpdateUserNameViewModel::class.java
     ) {
     init {
+        setCancelable(false)
+        setCanceledOnTouchOutside(false)
         mModel?.setCallBack(callBack)
     }
 
@@ -41,10 +44,9 @@ class UpdateUserNameDialog(context: Context, callBack: OnActionCallBack) :
         when (view.id) {
             R.id.tv_update -> {
                 updateUserName()
-                mCallBack?.callBack(
-                    UpdateUserNameViewModel.API_KEY_UPDATE_USERNAME,
-                    edtUserName?.text.toString()
-                )
+                dismiss()
+            }
+            R.id.iv_back -> {
                 dismiss()
             }
         }
@@ -61,5 +63,9 @@ class UpdateUserNameDialog(context: Context, callBack: OnActionCallBack) :
 
     override fun getLayoutId(): Int {
         return R.layout.view_m003_update_user_name_dialog
+    }
+
+    override fun initViewBinding(view: View): ViewM003UpdateUserNameDialogBinding {
+        return ViewM003UpdateUserNameDialogBinding.bind(view)
     }
 }

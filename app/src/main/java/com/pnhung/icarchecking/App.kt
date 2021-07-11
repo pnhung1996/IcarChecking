@@ -7,6 +7,7 @@ class App : Application() {
         super.onCreate()
         storage = Storage()
         instance = this
+        WebSocketUtil.getInstance()?.connectWebSocket()
     }
 
     fun getStorage(): Storage {

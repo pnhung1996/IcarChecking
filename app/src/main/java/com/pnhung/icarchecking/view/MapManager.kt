@@ -4,10 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Looper
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -15,14 +14,13 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.pnhung.icarchecking.R
 import com.pnhung.icarchecking.Storage
 import com.pnhung.icarchecking.view.api.model.CarInforModelRes
 import com.pnhung.icarchecking.view.api.model.entities.CarInfoEntity
+import com.pnhung.icarchecking.view.callback.OnActionCallBack
+import com.pnhung.icarchecking.view.dialog.CarInfoDialog
 
 class MapManager private constructor() : LocationCallback() {
     var mMap: GoogleMap? = null
@@ -30,9 +28,15 @@ class MapManager private constructor() : LocationCallback() {
     private var myLocation: Marker? = null
     private lateinit var fusedLPC: FusedLocationProviderClient
     private val listCarMarker: ArrayList<Marker> = ArrayList()
+    private var carInfoDialog: CarInfoDialog? = null
+    lateinit var callBack: OnActionCallBack
+    private var startMarker: Marker? = null
+    private var endMarker: Marker? = null
+    private var polyLine: Polyline? = null
 
     @SuppressLint("VisibleForTests")
-    fun initMap() {
+    fun initMap(map: GoogleMap) {
+        mMap = map
         mMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
         mMap?.uiSettings?.isZoomControlsEnabled = true
         mMap?.uiSettings?.setAllGesturesEnabled(true)
@@ -48,7 +52,14 @@ class MapManager private constructor() : LocationCallback() {
         }
         mMap?.isMyLocationEnabled = true
         mMap?.uiSettings?.isMyLocationButtonEnabled = false
-        mMap?.setInfoWindowAdapter(initAdapter())
+
+
+        mMap?.setOnMarkerClickListener {
+            if (it.tag != null) {
+                showCarInfor(it.tag as CarInfoEntity)
+            }
+            true
+        }
 
         //update my location
         fusedLPC = FusedLocationProviderClient(mContext)
@@ -58,23 +69,13 @@ class MapManager private constructor() : LocationCallback() {
         fusedLPC.requestLocationUpdates(locationRequest, this, Looper.getMainLooper())
     }
 
-
-    private fun initAdapter(): GoogleMap.InfoWindowAdapter {
-        return object : GoogleMap.InfoWindowAdapter {
-            override fun getInfoWindow(p0: Marker): View? {
-                return initCarInfoView(p0)
-            }
-            override fun getInfoContents(p0: Marker): View? {
-                return initCarInfoView(p0)
-            }
-
+    private fun showCarInfor(carInfoEntity: CarInfoEntity) {
+        if (carInfoDialog == null) {
+            carInfoDialog = CarInfoDialog(mContext, carInfoEntity, callBack)
+        } else {
+            carInfoDialog?.reload(carInfoEntity)
         }
-    }
-
-    private fun initCarInfoView(marker: Marker): View? {
-        val carInfo = marker.tag as CarInfoEntity
-        val v = View.inflate(mContext, R.layout.item_info, null)
-        return v
+        carInfoDialog?.show()
     }
 
     private fun updateMyLocation(result: LocationResult) {
@@ -103,9 +104,9 @@ class MapManager private constructor() : LocationCallback() {
 
         if (myLocation == null) {
             val myLocationOption = MarkerOptions()
-            myLocationOption?.title("Vị trí của tôi")
-            myLocationOption?.position(pos)
-            myLocationOption?.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+            myLocationOption.title("Vị trí của tôi")
+            myLocationOption.position(pos)
+            myLocationOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
             myLocation = mMap?.addMarker(myLocationOption)
         } else {
             myLocation?.position = pos
@@ -115,8 +116,8 @@ class MapManager private constructor() : LocationCallback() {
     }
 
 
-    fun showListCar(carInforModelRes: CarInforModelRes) {
-        if (carInforModelRes.data == null) {
+    fun showListCar(carInfoModelRes: CarInforModelRes) {
+        if (carInfoModelRes.data == null) {
             return
         }
         for (car in listCarMarker) {
@@ -124,7 +125,7 @@ class MapManager private constructor() : LocationCallback() {
         }
 
         listCarMarker.clear()
-        for ((index, car) in (carInforModelRes.data!!).withIndex()) {
+        for ((index, car) in (carInfoModelRes.data!!).withIndex()) {
             showCarOnMap(car, index)
         }
     }
@@ -134,7 +135,12 @@ class MapManager private constructor() : LocationCallback() {
         option.title(car.carNumber)
         val pos = LatLng((car.lastLat ?: "0").toDouble(), (car.lastLng ?: "0").toDouble())
         option.position(pos)
-        option.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor))
+        option.snippet(car.carNumber)
+        option.icon(
+            if (car.activeStatus.equals("online"))
+                BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor_active)
+            else BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor)
+        )
         val marker = mMap?.addMarker(option)
         marker?.tag = car
         listCarMarker.add(marker!!)
@@ -145,6 +151,92 @@ class MapManager private constructor() : LocationCallback() {
 
     fun stopHandleLocation() {
         fusedLPC.removeLocationUpdates(this)
+    }
+
+    fun updateStatusCar(carInfo: CarInfoEntity?) {
+        if (carInfo == null) return
+        for (item in listCarMarker) {
+            val tag = item.tag ?: continue
+            val carItem = tag as CarInfoEntity
+            if (carInfo.id == carItem.id) {
+                carInfo.phoneManager = carItem.phoneManager
+                carInfo.passwordManager = carItem.passwordManager
+                item.tag = carInfo
+
+                item.title = carInfo.carNumber
+                val pos =
+                    LatLng((carInfo.lastLat ?: "0").toDouble(), (carInfo.lastLng ?: "0").toDouble())
+                item.position = pos
+                item.snippet = carInfo.carNumber
+                item.setIcon(
+                    if (carInfo.activeStatus.equals("online"))
+                        BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor_active)
+                    else BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor)
+                )
+
+                break
+            }
+        }
+    }
+
+    fun updateTrackingCar(carInfo: CarInfoEntity) {
+        if (endMarker == null || endMarker!!.tag == null) return
+        val carItem = endMarker!!.tag as CarInfoEntity
+        carInfo.phoneManager = carItem.phoneManager
+        carInfo.passwordManager = carItem.passwordManager
+        endMarker!!.tag = carInfo
+
+        endMarker!!.title = carInfo.carNumber
+        val pos =
+            LatLng((carInfo.lastLat ?: "0").toDouble(), (carInfo.lastLng ?: "0").toDouble())
+        endMarker!!.position = pos
+        endMarker!!.snippet = carInfo.carNumber
+        endMarker!!.setIcon(
+            if (carInfo.activeStatus.equals("online"))
+                BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor_active)
+            else BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor)
+        )
+
+        val polyLinePoints:List<LatLng> = polyLine!!.points
+        polyLine!!.points = polyLinePoints
+        polyLine!!.points.add(pos)
+    }
+
+    fun showCarTracking(car: CarInfoEntity) {
+        if (startMarker != null) {
+            startMarker!!.remove()
+            endMarker!!.remove()
+        }
+        val option = MarkerOptions()
+        option.title(car.carNumber)
+        val pos = LatLng((car.lastLat ?: "0").toDouble(), (car.lastLng ?: "0").toDouble())
+        option.position(pos)
+        option.snippet(car.carNumber)
+        option.icon(
+            BitmapDescriptorFactory.fromResource(R.drawable.ic_flag_64)
+        )
+        mMap?.setOnMarkerClickListener {
+            true
+        }
+
+        startMarker = mMap?.addMarker(option)
+        startMarker!!.tag = car
+
+        option.icon(
+            if (car.activeStatus.equals("online"))
+                BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor_active)
+            else BitmapDescriptorFactory.fromResource(R.drawable.ic_car_monitor)
+        )
+        endMarker = mMap?.addMarker(option)
+        endMarker!!.tag = car
+
+        val polyOption = PolylineOptions()
+        polyOption.color(Color.RED)
+        polyOption.width(10f)
+        polyOption.add()
+        polyLine = mMap?.addPolyline(polyOption)
+
+        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 12f))
     }
 
     companion object {

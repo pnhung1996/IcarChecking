@@ -76,7 +76,7 @@ class M002LoginFrg : BaseFragment<FrgM002LoginBinding, M002LoginViewModel>() {
         }
 
         if (!CommonUtils.getInstance().isPhone(phone)) {
-            Toast.makeText(mContext, "Bạn chưa nhập đủ thông tin đăng nhập", Toast.LENGTH_SHORT)
+            Toast.makeText(mContext, "Số điện thoại không đúng định dạng", Toast.LENGTH_SHORT)
                 .show()
             return
         }
